@@ -20,4 +20,4 @@ def top_ten(subreddit):
                 print(post.get("data", {}).get("title"))
     except (requests.RequestException, ValueError):
         pass
-    print("OK")
+    print("OK", end="")
