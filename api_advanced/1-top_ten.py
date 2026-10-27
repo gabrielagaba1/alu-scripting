@@ -1,14 +1,14 @@
 #!/usr/bin/python3
-"""Print the titles of the first 10 hot posts."""
+"""Query the Reddit API and print the first 10 hot post titles."""
 import requests
 
 
 def top_ten(subreddit):
-    """Print the titles of the first 10 hot posts for a subreddit."""
-    url = "https://www.reddit.com/r/{}/hot.json?limit=10".format(subreddit)
-    headers = {
-        "User-Agent": "Mozilla/5.0 (compatible; ALUStudent/1.0)"
-    }
+    """Print the titles of the first 10 hot posts."""
+    url = "https://www.reddit.com/r/{}/hot.json?limit=10".format(
+        subreddit
+    )
+    headers = {"User-Agent": "ALUStudent/1.0"}
 
     try:
         response = requests.get(
@@ -28,9 +28,7 @@ def top_ten(subreddit):
             return
 
         for post in posts[:10]:
-            title = post.get("data", {}).get("title")
-            if title:
-                print(title)
+            print(post.get("data", {}).get("title", ""))
 
     except (requests.RequestException, ValueError, TypeError):
         print("None")
