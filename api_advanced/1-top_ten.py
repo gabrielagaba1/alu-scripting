@@ -1,23 +1,41 @@
 #!/usr/bin/python3
-"""Queries the Reddit API and prints the titles of the first 10 hot posts
-for a given subreddit."""
-import requests
+"""Print the first ten hot posts from a subreddit."""
+
+import json
+import urllib.error
+import urllib.request
+
+
+class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Prevent HTTP redirects."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
 
 
 def top_ten(subreddit):
-    """Print the titles of the first 10 hot posts of a subreddit."""
-    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    headers = {"User-Agent": "linux:alu-scripting.api_advanced:v1.0.0 "
-                             "(by /u/gabrielagaba1)"}
-    params = {"limit": 10}
+    """Print titles of the ten hottest posts in a subreddit."""
+    url = "https://www.reddit.com/r/{}/hot.json?limit=10".format(
+        urllib.request.quote(subreddit, safe="")
+    )
+    request = urllib.request.Request(
+        url, headers={"User-Agent": "alu-api-project/1.0"}
+    )
+    opener = urllib.request.build_opener(NoRedirectHandler)
 
     try:
-        response = requests.get(url, headers=headers, params=params,
-                                allow_redirects=False, timeout=10)
-        if response.status_code == 200:
-            posts = response.json().get("data", {}).get("children", [])
-            for post in posts[:10]:
-                print(post.get("data", {}).get("title"))
-    except (requests.RequestException, ValueError):
-        pass
-    print("OK", end="")
+        with opener.open(request, timeout=15) as response:
+            data = json.loads(response.read().decode("utf-8"))
+        posts = data.get("data", {}).get("children", [])
+        for post in posts[:10]:
+            title = post.get("data", {}).get("title")
+            if title is not None:
+                print(title)
+    except (urllib.error.HTTPError, urllib.error.URLError, ValueError):
+        print("None")
+
+
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1:
+        top_ten(sys.argv[1])
