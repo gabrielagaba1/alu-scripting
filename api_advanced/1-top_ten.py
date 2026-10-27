@@ -5,10 +5,10 @@ import requests
 
 def top_ten(subreddit):
     """Print the titles of the first 10 hot posts."""
-    url = "https://www.reddit.com/r/{}/hot.json?limit=10".format(
+    url = "https://old.reddit.com/r/{}/hot.json?limit=10".format(
         subreddit
     )
-    headers = {"User-Agent": "ALUStudent/1.0"}
+    headers = {"User-Agent": "linux:alu-scripting:v1.0 (student)"}
 
     try:
         response = requests.get(
