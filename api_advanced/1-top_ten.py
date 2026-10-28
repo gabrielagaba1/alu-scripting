@@ -7,7 +7,11 @@ def top_ten(subreddit):
     """Print the titles of the first 10 hot posts for a subreddit."""
     url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
     headers = {
-        "User-Agent": "python:alu-scripting:v1.0 (by /u/your_username)"
+        "User-Agent": (
+            "Mozilla/5.0 (X11; Linux x86_64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        )
     }
 
     try:
@@ -21,7 +25,8 @@ def top_ten(subreddit):
             print(None)
             return
 
-        posts = response.json().get("data", {}).get("children", [])
+        data = response.json()
+        posts = data.get("data", {}).get("children", [])
 
         for post in posts[:10]:
             print(post.get("data", {}).get("title"))
