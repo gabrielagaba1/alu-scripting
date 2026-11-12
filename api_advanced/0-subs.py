@@ -1,21 +1,28 @@
 #!/usr/bin/python3
-"""Returns the total number of subscribers for a subreddit."""
+"""Module that queries the Reddit API and returns the number of subscribers."""
 import requests
 
 
 def number_of_subscribers(subreddit):
-    """Return subscriber count, or 0 for an invalid subreddit."""
+    """Returns the total number of subscribers for a given subreddit.
+
+    If the subreddit is invalid, returns 0.
+    """
+    if subreddit is None or not isinstance(subreddit, str):
+        return 0
+
     url = "https://www.reddit.com/r/{}/about.json".format(subreddit)
-    headers = {"User-Agent": "linux:alu-scripting:v1.0 (by /u/gabrielagaba1)"}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+    }
+
     try:
         response = requests.get(
-            url, headers=headers, allow_redirects=False, timeout=10
+            url, headers=headers, allow_redirects=False
         )
-        if response.status_code != 200:
-            return 0
-        data = response.json().get("data")
-        if not isinstance(data, dict):
-            return 0
-        return data.get("subscribers", 0)
-    except (requests.RequestException, ValueError, TypeError):
+        if response.status_code == 200:
+            data = response.json().get("data", {})
+            return data.get("subscribers", 0)
+        return 0
+    except Exception:
         return 0
